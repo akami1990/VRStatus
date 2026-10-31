@@ -1,0 +1,13 @@
+{
+    "id": "vr-status",
+    "name": "VRStatus",
+    "version": "1.0.0",
+    "description": "Displays a fake VR headset activity on your Discord profile 🥽",
+    "authors": [
+        {
+            "name": "YourName",
+            "id": "000000000000000000"
+        }
+    ],
+    "main": "index.js"
+}
