@@ -1,22 +1,7 @@
-import { findByProps } from "@revenge-mod/modules/metro";
-import { after } from "@revenge-mod/patcher";
+import { findByProps } from "@vendetta/metro";
+import { showToast } from "@vendetta/ui/toasts";
 
 let interval = null;
-
-function buildActivity() {
-    return {
-        name: "<? wtf '!",
-        type: 0,
-        application_id: "438122941302046720",
-        details: "In VR",
-        state: "Wearing headset 🥽",
-        timestamps: {
-            start: Math.floor(Date.now() / 1000)
-        },
-        platform: "embedded",
-        flags: 1
-    };
-}
 
 function injectVR() {
     try {
@@ -24,11 +9,20 @@ function injectVR() {
         if (!Dispatcher) return;
         Dispatcher.dispatch({
             type: "LOCAL_ACTIVITY_UPDATE",
-            activity: buildActivity(),
+            activity: {
+                name: "<? wtf '!",
+                type: 0,
+                application_id: "438122941302046720",
+                details: "In VR",
+                state: "Wearing headset 🥽",
+                timestamps: { start: Math.floor(Date.now() / 1000) },
+                platform: "embedded",
+                flags: 1
+            },
             socketId: "VRStatus"
         });
     } catch (e) {
-        console.error("[VRStatus] Failed to inject:", e);
+        console.error("[VRStatus]", e);
     }
 }
 
@@ -41,15 +35,14 @@ function removeVR() {
             activity: null,
             socketId: "VRStatus"
         });
-    } catch (e) {
-        console.error("[VRStatus] Failed to remove:", e);
-    }
+    } catch (e) {}
 }
 
 export default {
     onLoad() {
         injectVR();
         interval = setInterval(injectVR, 5 * 60 * 1000);
+        showToast("VRStatus ON 🥽", findByProps("CHECKMARK_CIRCLE_24")?.CHECKMARK_CIRCLE_24);
     },
     onUnload() {
         clearInterval(interval);

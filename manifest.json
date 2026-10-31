@@ -2,12 +2,7 @@
     "id": "vr-status",
     "name": "VRStatus",
     "version": "1.0.0",
-    "description": "Displays a fake VR headset activity on your Discord profile 🥽",
-    "authors": [
-        {
-            "name": "akami1990",
-            "id": "000000000000000000"
-        }
-    ],
+    "description": "Fake VR headset activity on your profile 🥽",
+    "authors": [{"name": "akami1990", "id": "000000000000000000"}],
     "main": "index.js"
 }
