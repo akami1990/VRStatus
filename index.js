@@ -1,72 +1,58 @@
-import { findByProps } from "@metro/utils";
-import { before, after } from "@patcher";
-import { showToast } from "@ui/toasts";
-import { storage } from "@vendetta/plugin";
+import { findByProps } from "@revenge-mod/modules/metro";
+import { after } from "@revenge-mod/patcher";
 
-// ── Default settings ──────────────────────────────────────────────
-storage.appName   ??= "<? wtf '!";
-storage.statusText ??= "In VR";
-storage.enabled   ??= true;
+let interval = null;
 
-let _interval = null;
-
-// ── VR Activity payload ───────────────────────────────────────────
 function buildActivity() {
     return {
-        name: storage.appName,
-        type: 0,                               // 0 = Playing
-        application_id: "438122941302046720",  // SteamVR app id
-        details: storage.statusText,
+        name: "<? wtf '!",
+        type: 0,
+        application_id: "438122941302046720",
+        details: "In VR",
         state: "Wearing headset 🥽",
-        timestamps: { start: Math.floor(Date.now() / 1000) },
-        assets: {
-            large_image: "vr_headset",
-            large_text: "In VR",
+        timestamps: {
+            start: Math.floor(Date.now() / 1000)
         },
-        platform: "embedded",                  // triggers VR badge
-        flags: 1,
+        platform: "embedded",
+        flags: 1
     };
 }
 
-// ── Inject / Remove ───────────────────────────────────────────────
 function injectVR() {
     try {
         const Dispatcher = findByProps("dispatch", "subscribe");
+        if (!Dispatcher) return;
         Dispatcher.dispatch({
             type: "LOCAL_ACTIVITY_UPDATE",
             activity: buildActivity(),
-            socketId: "VRStatus",
+            socketId: "VRStatus"
         });
     } catch (e) {
-        console.error("[VRStatus] inject failed:", e);
+        console.error("[VRStatus] Failed to inject:", e);
     }
 }
 
 function removeVR() {
     try {
         const Dispatcher = findByProps("dispatch", "subscribe");
+        if (!Dispatcher) return;
         Dispatcher.dispatch({
             type: "LOCAL_ACTIVITY_UPDATE",
             activity: null,
-            socketId: "VRStatus",
+            socketId: "VRStatus"
         });
     } catch (e) {
-        console.error("[VRStatus] remove failed:", e);
+        console.error("[VRStatus] Failed to remove:", e);
     }
 }
 
-// ── Plugin entry ──────────────────────────────────────────────────
 export default {
     onLoad() {
         injectVR();
-        // Re-inject every 5 min so Discord doesn't drop it
-        _interval = setInterval(injectVR, 5 * 60 * 1000);
-        showToast("VRStatus enabled 🥽");
+        interval = setInterval(injectVR, 5 * 60 * 1000);
     },
-
     onUnload() {
-        clearInterval(_interval);
+        clearInterval(interval);
         removeVR();
-        showToast("VRStatus disabled");
-    },
+    }
 };
